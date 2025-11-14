@@ -1,7 +1,6 @@
 import java.util.Random;
 
-
-public class Auto  extends Thread {
+public class Auto extends Thread {
     private String colore;
     private int metriPercorsi = 0;
     private Random random = new Random();
@@ -15,27 +14,31 @@ public class Auto  extends Thread {
         return colore;
     }
 
-    public int getMetriPercorsi() {
+    public synchronized int getMetriPercorsi() {
         return metriPercorsi;
     }
 
-    @Override
-    public void run(){
-        while (inGara){
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-               System.out.println("errore");
-            }
-            int passo = random.nextInt(10) + 1; // tra 1 e 10 metri
-            metriPercorsi += passo;
-            System.out.println("macchina "+colore+" ha fatto "+passo+" metri!");
-            System.out.println ("macchina "+colore+" ha percorso in totale "+getMetriPercorsi());
+    public synchronized void aggiungiMetri(int passo) {
+        metriPercorsi += passo;
+    }
 
-            if (metriPercorsi>=50){
-                inGara=false;
-                System.out.println("macchina di colore "+colore+" vince la gara!!");
+    public void terminaGara() {
+        inGara = false;
+    }
+
+    @Override
+    public void run() {
+        while (inGara != false) {
+            try {
+                Thread.sleep(1000); // ogni secondo
+            } catch (InterruptedException e) {
+                System.out.println("Errore nel thread della macchina " + colore);
             }
+
+            int passo = random.nextInt(49) + 1; // passo casuale
+            aggiungiMetri(passo);
+
+            System.out.println(colore + " ha percorso " + getMetriPercorsi() + " metri.");
         }
     }
 }
