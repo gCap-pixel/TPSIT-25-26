@@ -34,6 +34,5 @@ public class Giocatore extends Thread {
         } catch (InterruptedException e) {
             System.err.println("ERRORE NELLO SLEEPING");
         }
-        gioca();
     }
 }
